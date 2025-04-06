@@ -1,0 +1,39 @@
+{
+    "home": [
+        {
+            "position": "0 2 -3",
+            "scale": "1 1 1",
+            "target": "cl1",
+            "icon": "toSTGJ"
+        },
+        {
+            "position": "-1 2 -3",
+            "scale": "1 1 1",
+            "target": "cl2"
+        }
+    ],
+    "cl1": [
+        {
+            "position": "0 -10 -3",
+            "scale": "1 1 1",
+            "target": "cl2"
+        },
+        {
+            "position": "-1 2 -3",
+            "scale": "1 1 1",
+            "target": "home"
+        }
+    ],
+    "cl2": [
+        {
+            "position": "0 -10 -3",
+            "scale": "1 1 1",
+            "target": "cl1"
+        },
+        {
+            "position": "-1 10 -3",
+            "scale": "1 1 1",
+            "target": "home"
+        }
+    ]
+}

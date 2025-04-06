@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>reVR</title>
+  <meta name="application-name" content="妈祖庙VR系统">
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <script src="js/wayPointLoad.js"></script>
+  <!-- WebXR Polyfill 为旧版浏览器提供 WebXR 兼容性 -->
+  <script src="https://cdn.jsdelivr.net/npm/webxr-polyfill@latest/build/webxr-polyfill.js"></script>
+  <script>
+    new WebXRPolyfill();
+  </script>
+</head>
+
+<body>
+
+  <!-- 关闭非https协议时的报错，不影响使用，vr模式固定开启 -->
+  <a-scene device-orientation-permission-ui="enabled: false" xr-mode-ui="enabled: true" cardboardModeEnabled="true">
+
+    <a-camera position="0 1.6 0">
+      <!-- 设置光标颜色为红色，开启凝视交互，设置凝视时间为1.5秒，设置凝视（可交互）对象为.clickable -->
+      <!-- 动画效果：光标移入时放大，移出时恢复原状 -->
+      <a-cursor color="red" fuse="true" fuse-timeout="1500" raycaster="objects: .clickable"
+        animation__enter="property: scale; to: 1.5 1.5 1.5; startEvents: mouseenter; dur: 300"
+        animation__leave="property: scale; to: 1.0 1.0 1.0; startEvents: mouseleave; dur: 0">
+      </a-cursor>
+    </a-camera>
+
+    <!-- 初始场景 -->
+    <a-sky id="sky" src="img/sky/cl1.jpg"></a-sky>
+    <!-- 路径点 -->
+    <a-image id="toSTGJ" src="img/icon/toSTGJ.png" position="2 1 -5" class="clickable" way-editor></a-image>
+    <a-image id="direct" src="img/icon/pointer.png" position="0 2 -5" scale="0.5 0.5 0.5" class="clickable"
+      target="home"></a-image>
+
+  </a-scene>
+
+
+</body>
+
+</html>
