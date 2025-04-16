@@ -22,9 +22,9 @@ let home = 'home';//默认场景为home
 // };
 let wayPoints = {};
 //路径相同的部分使用变量名节约空间
-let wayPointsPath = '/reVR/json/wayPoints.json';
-let iconPath = '/reVR/img/icon/';
-let skyPath = '/reVR/img/sky/';
+let wayPointsPath = 'json/wayPoints.json';
+let iconPath = 'img/icon/';
+let skyPath = 'img/sky/';
 
 // 加载JSON配置文件
 // 以下到init()由ai生成
