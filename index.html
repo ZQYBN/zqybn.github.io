@@ -3,10 +3,11 @@
 
 <head>
   <meta charset="utf-8">
-  <title>湄洲岛妈祖庙VR全景</title>
+  <title>reVR</title>
   <meta name="application-name" content="妈祖庙VR系统">
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   <script src="js/wayPointLoad.js"></script>
+  <script src="js/wayPointEditor.js"></script>
   <!-- WebXR Polyfill 为旧版浏览器提供 WebXR 兼容性 -->
   <script src="https://cdn.jsdelivr.net/npm/webxr-polyfill@latest/build/webxr-polyfill.js"></script>
   <script>
@@ -17,26 +18,57 @@
 <body>
 
   <!-- 关闭非https协议时的报错，不影响使用，vr模式固定开启 -->
-  <a-scene device-orientation-permission-ui="enabled: false" xr-mode-ui="enabled: true" cardboardModeEnabled="true">
-
-    <a-camera position="0 1.6 0">
-      <!-- 设置光标颜色为红色，开启凝视交互，设置凝视时间为1.5秒，设置凝视（可交互）对象为.clickable -->
-      <!-- 动画效果：光标移入时放大，移出时恢复原状 -->
-      <a-cursor color="red" fuse="true" fuse-timeout="1500" raycaster="objects: .clickable"
+  <a-scene device-orientation-permission-ui="enabled: false" xr-mode-ui="enabled: true" cardboardModeEnabled="true"
+    get-intersection>
+    <!-- 相机高度1.6米，禁用WASD键移动，启用指针锁定，设置凝视（可交互）对象为.clickable -->
+    <a-camera id="maincamera" position="0 1.6 0" wasd-controls="enabled: false"
+      look-controls="pointerLockEnabled: true">
+      <!-- 用于路径点交互的光标 -->
+      <a-cursor color="red" fuse="true" fuse-timeout="1500"
         animation__enter="property: scale; to: 1.5 1.5 1.5; startEvents: mouseenter; dur: 300"
-        animation__leave="property: scale; to: 1.0 1.0 1.0; startEvents: mouseleave; dur: 0">
+        animation__leave="property: scale; to: 1.0 1.0 1.0; startEvents: mouseleave; dur: 0"
+        raycaster="objects: .clickable, .permanent">
       </a-cursor>
+      <!-- 路径点射线检测器 -->
+      <a-entity id="wpraycaster" raycaster="objects: .clickable, .permanent; far: 1000"></a-entity>
+      <!-- 透明天空盒射线检测器 -->
+      <a-entity id="skyraycaster" raycaster="objects: #transparentbox; far: 1000"></a-entity>
     </a-camera>
 
-    <!-- 初始场景 -->
-    <a-sky id="sky" src="img/sky/cl1.jpg"></a-sky>
-    <!-- 路径点 -->
-    <a-image id="toSTGJ" src="img/icon/toSTGJ.png" position="2 1 -5" class="clickable" way-editor></a-image>
-    <a-image id="direct" src="img/icon/pointer.png" position="0 2 -5" scale="0.5 0.5 0.5" class="clickable"
-      target="home"></a-image>
+    <!-- 透明盒子用于检测交点，半径设为20，坐标与相机同步 -->
+    <a-sky id="transparentbox" position="0 1.6 0" radius="20" opacity="0"></a-sky>
+    <!-- 返回主页按钮 -->
+    <!-- <a-image id="backToHome" src="img/icon/toHOME.png" position="0 -8.4 0" rotation="90 0 0" class="clickable permanent"
+      target="home"></a-iamge> -->
+
+    <!-- 路径点编辑器 -->
+    <dialog id="saveDialog" style="padding: 20px; border-radius: 5px; background-color: #2399d7; color: white;">
+      <form method="dialog"
+        onsubmit="if(document.getElementById('targetInput').value.trim()) return true; alert('请输入目标场景'); return false;">
+        <div style="margin: 10px 0; display: flex; align-items: center;">
+          <label for="targetInput" style="width: 100px; font-weight: bold; text-align: center;">目标场景：<span
+              style="color: red;">*</span></label>
+          <input type="text" id="targetInput" required style="width: 200px; margin: 5px 0; padding: 5px;">
+        </div>
+        <div style="margin: 10px 0; display: flex; align-items: center;">
+          <label for="iconInput"
+            style="width: 100px; font-weight: bold; text-align: center;">图&nbsp;&nbsp;&nbsp;&nbsp;标：</label>
+          <input type="text" id="iconInput" style="width: 200px; margin: 5px 0; padding: 5px;">
+        </div>
+        <menu style="display: flex; justify-content: flex-end; gap: 10px; padding: 0; margin-top: 20px;">
+          <li style="list-style: none;">
+            <button type="button" value="cancel" onclick="this.closest('dialog').close('cancel')"
+              style="padding: 5px 15px; background-color: #ffffff; border: none;">取消</button>
+          </li>
+          <li style="list-style: none;">
+            <button type="submit" value="save" style="padding: 5px 15px; background-color: #ffffff; border: none;"
+              id="saveBtn">保存</button>
+          </li>
+        </menu>
+      </form>
+    </dialog>
 
   </a-scene>
-
 
 </body>
 
