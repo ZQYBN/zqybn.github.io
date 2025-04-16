@@ -93,7 +93,7 @@ function createTempWayPoint(position) {
         z: (position.z + camera.getAttribute('position').z) / 2
     };
     const wayPoint = document.createElement('a-image');
-    wayPoint.setAttribute('src', '/reVR/img/icon/pointer.png');
+    wayPoint.setAttribute('src', 'img/icon/pointer.png');
     wayPoint.setAttribute('position', halfPosition);
     wayPoint.setAttribute('class', 'clickable');
     wayPoint.setAttribute('scale', '1.2 1.2 1.2');
@@ -177,7 +177,7 @@ function saveWayPoint() {
                         return;
                     }
 
-                    intersectedEl.setAttribute('src', `/reVR/img/icon/${icon}.png`);
+                    intersectedEl.setAttribute('src', `img/icon/${icon}.png`);
                     intersectedEl.setAttribute('target', target);
                     intersectedEl.setAttribute('icon', icon);
 
