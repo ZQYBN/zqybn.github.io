@@ -5,7 +5,9 @@
 
 ## 声明
 本文档由AI辅助生成
-
+## License  
+This project is licensed under the MIT License.  
+Includes code from [A-Frame](https://aframe.io), also under the MIT License.
 ## 主要功能
 - **全景浏览**: 提供高清全景图片，支持360度无死角观看
 - **VR模式**: 支持手机VR模式，配合VR眼镜使用可获得更好的沉浸感 
