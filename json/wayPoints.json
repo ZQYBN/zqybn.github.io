@@ -1,11 +1,6 @@
 {
     "home": [
         {
-            "position": "0 2 -3",
-            "target": "cl1",
-            "icon": "toSTGJ"
-        },
-        {
             "position": "-1 2 -3",
             "target": "cl2",
             "icon": "toCL"
