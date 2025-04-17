@@ -3,8 +3,10 @@
 
 <head>
   <meta charset="utf-8">
-  <title>湄洲岛妈祖庙全景VR系统</title>
-  <meta name="application-name" content="妈祖庙全景VR系统">
+  <title>reVR</title>
+  <meta name="application-name" content="妈祖庙VR系统">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   <script src="js/wayPointLoad.js"></script>
   <script src="js/wayPointEditor.js"></script>
@@ -27,10 +29,10 @@
       <a-cursor color="red" fuse="true" fuse-timeout="1500"
         animation__enter="property: scale; to: 1.5 1.5 1.5; startEvents: mouseenter; dur: 300"
         animation__leave="property: scale; to: 1.0 1.0 1.0; startEvents: mouseleave; dur: 0"
-        raycaster="objects: .clickable, .permanent">
+        raycaster="objects: .clickable, .gaze-only">
       </a-cursor>
       <!-- 路径点射线检测器 -->
-      <a-entity id="wpraycaster" raycaster="objects: .clickable, .permanent; far: 1000"></a-entity>
+      <a-entity id="wpraycaster" raycaster="objects: .clickable; far: 1000"></a-entity>
       <!-- 透明天空盒射线检测器 -->
       <a-entity id="skyraycaster" raycaster="objects: #transparentbox; far: 1000"></a-entity>
     </a-camera>
@@ -38,8 +40,8 @@
     <!-- 透明盒子用于检测交点，半径设为20，坐标与相机同步 -->
     <a-sky id="transparentbox" position="0 1.6 0" radius="20" opacity="0"></a-sky>
     <!-- 返回主页按钮 -->
-    <!-- <a-image id="backToHome" src="img/icon/toHOME.png" position="0 -8.4 0" rotation="90 0 0" class="clickable permanent"
-      target="home"></a-iamge> -->
+    <a-image id="backToHome" src="img/icon/toHOME.png" position="0 -8.4 0" rotation="90 0 0" class="gaze-only"
+      target="home"></a-image>
 
     <!-- 路径点编辑器 -->
     <dialog id="saveDialog" style="padding: 20px; border-radius: 5px; background-color: #2399d7; color: white;">

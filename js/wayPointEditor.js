@@ -4,6 +4,7 @@ let wpraycaster;
 let skyraycaster;
 let saveArray = {};
 let tempSaveArray = [];
+let keyboardHandler;
 
 AFRAME.registerComponent('get-intersection', {
     schema: {},
@@ -24,8 +25,9 @@ AFRAME.registerComponent('get-intersection', {
                     // 初始化射线检测器
                     skyraycaster = camera.querySelector('#skyraycaster').components.raycaster;
                     wpraycaster = camera.querySelector('#wpraycaster').components.raycaster;
-                    // 添加键盘监听
-                    document.body.addEventListener('keydown', this.handleKeyDown);
+                    // 保存handleKeyDown的引用
+                    keyboardHandler = this.handleKeyDown;
+                    document.body.addEventListener('keydown', keyboardHandler);
                     observer.disconnect();
                     console.log('编辑器组件初始化完成');
                 }
@@ -153,8 +155,10 @@ function saveWayPoint() {
             const dialog = document.getElementById('saveDialog');
             const targetInput = document.getElementById('targetInput');
             const iconInput = document.getElementById('iconInput');
-            // 禁用相机控制
+            // 禁用相机控制和键盘监听
             camera.setAttribute('look-controls', 'enabled', false);
+            document.body.removeEventListener('keydown', keyboardHandler);
+
             dialog.showModal();
             // 清空之前的输入
             setTimeout(() => {
@@ -185,12 +189,14 @@ function saveWayPoint() {
                     console.log('已保存路径点:', intersectedEl);
                     console.log('tempSaveArray:', tempSaveArray);
 
-                    // 启用相机控制
+                    // 启用相机控制和键盘监听
                     camera.setAttribute('look-controls', 'enabled', true);
+                    document.body.addEventListener('keydown', keyboardHandler);
                     saveTempToSave();
                 } else {
-                    // 取消保存，启用相机控制
+                    // 取消保存，启用相机控制和键盘监听
                     camera.setAttribute('look-controls', 'enabled', true);
+                    document.body.addEventListener('keydown', keyboardHandler);
                 }
             }, { once: true });
         }

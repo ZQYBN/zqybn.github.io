@@ -81,7 +81,6 @@ async function waitForScene() {
 // 初始化函数
 async function init() {
     try {
-        // 等待场景和数据都加载完成
         const [sceneLoaded, dataLoaded] = await Promise.all([
             waitForScene(),
             loadWayPoints()
@@ -91,11 +90,34 @@ async function init() {
             throw new Error('初始化失败：场景或数据加载失败');
         }
         let mainsky = document.createElement('a-sky');
+        // 创建固定UI元素
+        // createFixedUI();
         backToHome(mainsky);
     } catch (error) {
         console.error('初始化失败:', error);
     }
 }
+
+// // 创建固定UI元素
+// function createFixedUI() {
+//     const camera = document.querySelector('#maincamera');
+//     // 创建UI容器
+//     const uiContainer = document.createElement('a-entity');
+//     uiContainer.setAttribute('position', '0 -0.5 -1');
+//     uiContainer.setAttribute('look-controls-enabled', 'false');
+
+//     // 创建返回主页按钮
+//     const homeButton = document.createElement('a-image');
+//     homeButton.setAttribute('id', 'backToHome');
+//     homeButton.setAttribute('src', iconPath + 'toHOME.png');
+//     homeButton.setAttribute('scale', '0.1 0.1 0.1');
+//     homeButton.setAttribute('class', 'gaze-only');
+//     homeButton.setAttribute('target', 'home');
+
+//     // 组装UI
+//     uiContainer.appendChild(homeButton);
+//     camera.appendChild(uiContainer);
+// }
 
 function backToHome(mainsky) {
     if (document.querySelector('a-scene').querySelector('#mainsky') == null) {
@@ -156,7 +178,7 @@ function changeSky(target) {
 
 // 删除路径点功能
 function deleteWayPoints() {
-    scene.querySelectorAll('a-image:not(.permanent)').forEach(item => {
+    scene.querySelectorAll('a-image.clickable').forEach(item => {
         item.parentNode.removeChild(item);
         // console.log('delete all wayPoints !')
     });
