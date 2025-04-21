@@ -128,6 +128,27 @@ function deleteWayPoint() {
             if (index > -1) {
                 tempSaveArray.splice(index, 1);
             }
+
+            // 从saveArray中移除
+            const sky = mainsky.getAttribute('src').split('/').pop().replace('.jpg', '');
+            if (saveArray[sky]) {
+                const pos = intersectedEl.getAttribute('position');
+                const target = intersectedEl.getAttribute('target');
+                const icon = intersectedEl.getAttribute('icon');
+
+                // 查找并移除匹配的路径点
+                saveArray[sky] = saveArray[sky].filter(wayPoint =>
+                    wayPoint.position !== `${pos.x} ${pos.y} ${pos.z}` ||
+                    wayPoint.target !== target ||
+                    wayPoint.icon !== icon
+                );
+
+                // 如果场景没有路径点了，删除该场景
+                if (saveArray[sky].length === 0) {
+                    delete saveArray[sky];
+                }
+            }
+
             // 从场景中移除
             intersectedEl.parentNode.removeChild(intersectedEl);
             console.log('已删除路径点:', intersectedEl);
@@ -168,11 +189,8 @@ function saveWayPoint() {
             // 监听对话框关闭事件
             dialog.addEventListener('close', () => {
                 if (dialog.returnValue === 'save') {
-                    // 检查是否已经保存过
-                    if (tempSaveArray.includes(intersectedEl)) {
-                        console.log('该路径点已保存');
-                        return;
-                    }
+                    //待办：检查之前是否存在
+
                     // 表单处理
                     const target = targetInput.value.trim();
                     const icon = iconInput.value.trim() || 'pointer'; // 如果图标为空则使用默认值
@@ -180,14 +198,13 @@ function saveWayPoint() {
                         alert('请输入目标场景');
                         return;
                     }
-
+                    .0
                     intersectedEl.setAttribute('src', `img/icon/${icon}.png`);
                     intersectedEl.setAttribute('target', target);
                     intersectedEl.setAttribute('icon', icon);
 
                     tempSaveArray.push(intersectedEl);
-                    console.log('已保存路径点:', intersectedEl);
-                    console.log('tempSaveArray:', tempSaveArray);
+                    console.log('传入临时路径点', intersectedEl);
 
                     // 启用相机控制和键盘监听
                     camera.setAttribute('look-controls', 'enabled', true);
@@ -206,21 +223,54 @@ function saveWayPoint() {
 };
 // 导出路径点配置为JSON文件
 // 调用函数导出为json并提供下载
-function exportSavedWayPointAsJson() {
-    // 缩进4格美化json
-    const jsonStr = JSON.stringify(saveArray, null, 4);
-    const blob = new Blob([jsonStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'waypoints.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    console.log('已导出路径点配置:', saveArray);
-};
+async function exportSavedWayPointAsJson() {
+    try {
+        // 加载现有的wayPoints.json
+        const response = await fetch('json/wayPoints.json');
+        const wpJson = await response.json();
+
+        // 深度合并两个JSON对象
+        const mergedData = deepMerge(saveArray, wpJson);
+
+        // 缩进4格美化json
+        const jsonStr = JSON.stringify(mergedData, null, 4);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'waypoints.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        console.log('已导出合并后的路径点配置:', mergedData);
+    } catch (error) {
+        console.error('导出路径点配置失败:', error);
+    }
+}
+
+// 深度合并函数
+function deepMerge(target, source) {
+    const output = { ...target };
+    for (const key of Object.keys(source)) {
+        if (source[key] instanceof Object && key in target) {
+            // 如果两个对象都有相同的key，且值都是数组，则合并数组
+            if (Array.isArray(target[key]) && Array.isArray(source[key])) {
+                output[key] = [...target[key], ...source[key]];
+            } else {
+                // 否则递归合并
+                output[key] = deepMerge(target[key], source[key]);
+            }
+        } else {
+            // 如果目标对象没有这个key，直接赋值
+            output[key] = source[key];
+        }
+    }
+    return output;
+}
 // json处理
+// temp保存的格式为对象格式，包含路径点的所有参数，而且是软拷贝，一旦场景切换就会丢失
+// 这里将临时路径点映射保存为一个新的路径点并存储在saveArray中，并清空临时路径点
 function saveTempToSave() {
     const sky = mainsky.getAttribute('src').split('/').pop().replace('.jpg', '');
     const newWayPoint = tempSaveArray.map(wayPoint => {
